@@ -7,8 +7,8 @@ const char *ssid = "NADAF";
 const char *password = "8362006307";
 
 //===================== SERVER =====================
-String serverGetUrl = "https://nadafhome.vercel.app/get_states";
-String serverPostUrl = "https://nadafhome.vercel.app/update_device";
+String serverGetUrl = "https://nadafhome.vercel.app/api/get_states";
+String serverPostUrl = "https://nadafhome.vercel.app/api/update_device";
 
 //===================== TIMERS =====================
 unsigned long previousMillis = 0;
