@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/update_device",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/get_states",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/esp_status",
+      "destination": "/api/index.py"
+    }
+  ]
+}
