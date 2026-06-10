@@ -7,8 +7,8 @@ const char *ssid = "NADAF";
 const char *password = "8362006307";
 
 //===================== SERVER =====================
-String serverGetUrl = "http://192.168.1.8:5000/get_states";
-String serverPostUrl = "http://192.168.1.8:5000/update_device";
+String serverGetUrl = "https://nadafhome.vercel.app/get_states";
+String serverPostUrl = "https://nadafhome.vercel.app/update_device";
 
 //===================== TIMERS =====================
 unsigned long previousMillis = 0;
@@ -89,7 +89,8 @@ void sendStateToServer(String id, String state) {
   if (WiFi.status() != WL_CONNECTED)
     return;
 
-  WiFiClient client;
+  WiFiClientSecure client;
+  client.setInsecure(); // Required for HTTPS without certificate validation
   HTTPClient http;
 
   http.begin(client, serverPostUrl);
@@ -125,7 +126,8 @@ void getStatesFromServer() {
   if (WiFi.status() != WL_CONNECTED)
     return;
 
-  WiFiClient client;
+  WiFiClientSecure client;
+  client.setInsecure(); // Required for HTTPS without certificate validation
   HTTPClient http;
 
   http.begin(client, serverGetUrl);

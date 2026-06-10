@@ -1,0 +1,22 @@
+{
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/update_device",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/get_states",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/esp_status",
+      "dest": "/api/index.py"
+    }
+  ]
+}
