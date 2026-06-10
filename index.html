@@ -193,12 +193,12 @@
         if (window.location.hostname.includes("vercel.app")) {
             BACKEND_URL = ""; // Use relative paths for Vercel Serverless Functions
         } else if (window.location.hostname.includes("github.io")) {
-            BACKEND_URL = "https://nadafhome.vercel.app"; // Point to Vercel Backend
+            BACKEND_URL = "https://homenadaf.vercel.app"; // Point to Vercel Backend
         } else if (window.location.port === "5500" || window.location.port === "5501") {
             BACKEND_URL = "http://127.0.0.1:5000";
         } else {
             // Default to Vercel backend for all other situations (like local file opening)
-            BACKEND_URL = "https://nadafhome.vercel.app";
+            BACKEND_URL = "https://homenadaf.vercel.app";
         }
 
         function toggleDevice(id, iconId, cardId) {
@@ -209,7 +209,7 @@
             updateVisuals(id, iconId, cardId, newState);
 
             // Send to Python Backend
-            fetch(BACKEND_URL + '/api/update_device', {
+            fetch(BACKEND_URL + '/update_device', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -260,7 +260,7 @@
 
         // Automatically update UI if physical buttons are pressed on the ESP32
         setInterval(() => {
-            fetch(BACKEND_URL + '/api/get_states')
+            fetch(BACKEND_URL + '/get_states')
             .then(response => response.json())
             .then(data => {
                 for (const [id, state] of Object.entries(data)) {
@@ -278,7 +278,7 @@
             .catch(error => console.error('Error fetching states:', error));
             
             // Check hardware connection status
-            fetch(BACKEND_URL + '/api/esp_status')
+            fetch(BACKEND_URL + '/esp_status')
             .then(response => response.json())
             .then(data => {
                 let badge = document.getElementById("connection_status");
