@@ -193,12 +193,12 @@
         if (window.location.hostname.includes("vercel.app")) {
             BACKEND_URL = ""; // Use relative paths for Vercel Serverless Functions
         } else if (window.location.hostname.includes("github.io")) {
-            BACKEND_URL = "https://nadafhome-ae1fft1wy-ailabs83601-7531s-projects.vercel.app"; // Point to Vercel Backend
+            BACKEND_URL = "https://nadafhome.vercel.app"; // Point to Vercel Backend
         } else if (window.location.port === "5500" || window.location.port === "5501") {
             BACKEND_URL = "http://127.0.0.1:5000";
         } else {
             // Default to Vercel backend for all other situations (like local file opening)
-            BACKEND_URL = "https://nadafhome-ae1fft1wy-ailabs83601-7531s-projects.vercel.app";
+            BACKEND_URL = "https://nadafhome.vercel.app";
         }
 
         function toggleDevice(id, iconId, cardId) {
