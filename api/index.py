@@ -27,16 +27,21 @@ memory_states = {
 last_memory_ping = 0
 
 def get_all_states():
+    global memory_states
     if redis_client:
         try:
             states = redis_client.get('device_states')
             if states:
-                return json.loads(states)
+                parsed_states = json.loads(states)
+                memory_states.update(parsed_states) # Cache the latest successful read
+                return parsed_states
             else:
                 redis_client.set('device_states', json.dumps(memory_states))
                 return memory_states
         except Exception as e:
             print("Redis get error:", e)
+            # Fallback to last known states instead of resetting to OFF
+            return memory_states
     return memory_states
 
 def update_state(device_id, state):
@@ -44,13 +49,12 @@ def update_state(device_id, state):
     states = get_all_states()
     if device_id in states:
         states[device_id] = state
+        memory_states[device_id] = state # Always update local cache
         if redis_client:
             try:
                 redis_client.set('device_states', json.dumps(states))
             except Exception as e:
                 print("Redis set error:", e)
-        else:
-            memory_states[device_id] = state
         return True
     return False
 

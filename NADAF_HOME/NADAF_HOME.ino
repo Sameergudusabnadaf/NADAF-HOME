@@ -12,9 +12,9 @@ String serverPostUrl = "https://nadafhome.vercel.app/update_device";
 
 //===================== TIMERS =====================
 unsigned long previousMillis = 0;
-const long interval = 500; // Faster sync
+const long interval = 2500; // Slower sync to prevent Vercel KV rate limits
 
-unsigned long debounceDelay = 250;
+unsigned long debounceDelay = 50; // Standard debounce delay
 
 //===================== DEVICE STRUCT =====================
 struct Device {
@@ -24,6 +24,7 @@ struct Device {
   String currentState;
   bool lastButtonState;
   unsigned long lastDebounceTime;
+  bool lastFlickerableState;
 };
 
 //=========================================================
@@ -40,10 +41,10 @@ struct Device {
 // D8 = GPIO15
 //=========================================================
 
-Device devices[] = {{"light1", 0, 5, "OFF", HIGH, 0},
-                    {"light2", 2, 4, "OFF", HIGH, 0},
-                    {"light3", 14, 13, "OFF", HIGH, 0},
-                    {"hallfan", 12, 15, "OFF", HIGH, 0}};
+Device devices[] = {{"light1", 0, 5, "OFF", HIGH, 0, HIGH},
+                    {"light2", 2, 4, "OFF", HIGH, 0, HIGH},
+                    {"light3", 14, 13, "OFF", HIGH, 0, HIGH},
+                    {"hallfan", 12, 15, "OFF", HIGH, 0, HIGH}};
 
 const int numDevices = sizeof(devices) / sizeof(Device);
 
@@ -177,13 +178,20 @@ void readButtons() {
 
     bool reading = digitalRead(devices[i].buttonPin);
 
-    if (reading != devices[i].lastButtonState) {
+    // If the switch changed, due to noise or pressing:
+    if (reading != devices[i].lastFlickerableState) {
+      devices[i].lastDebounceTime = millis();
+      devices[i].lastFlickerableState = reading;
+    }
 
-      if (millis() - devices[i].lastDebounceTime > debounceDelay) {
+    if ((millis() - devices[i].lastDebounceTime) > debounceDelay) {
+      // whatever the reading is at, it's been there for longer than the debounce
+      // delay, so take it as the actual current state:
+      if (reading != devices[i].lastButtonState) {
+        devices[i].lastButtonState = reading;
 
-        devices[i].lastDebounceTime = millis();
-
-        if (reading == LOW) {
+        // only toggle if the new button state is LOW
+        if (devices[i].lastButtonState == LOW) {
 
           Serial.print("Pressed: ");
           Serial.println(devices[i].id);
@@ -197,8 +205,6 @@ void readButtons() {
 
           sendStateToServer(devices[i].id, devices[i].currentState);
         }
-
-        devices[i].lastButtonState = reading;
       }
     }
   }
