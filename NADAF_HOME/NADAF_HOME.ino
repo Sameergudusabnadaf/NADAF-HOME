@@ -156,6 +156,7 @@ void getStatesFromServer() {
             devices[i].currentState = serverState;
 
             updateRelay(devices[i].relayPin, devices[i].currentState);
+            delay(200); // Wait 200ms between relays to prevent power supply brownout
 
             Serial.print(devices[i].id);
             Serial.print(" => ");
@@ -190,18 +191,20 @@ void readButtons() {
       if (reading != devices[i].lastButtonState) {
         devices[i].lastButtonState = reading;
 
-        // only toggle if the new button state is LOW
-        if (devices[i].lastButtonState == LOW) {
+        // map physical switch position to state: LOW -> ON, HIGH -> OFF
+        String targetState = (devices[i].lastButtonState == LOW) ? "ON" : "OFF";
 
-          Serial.print("Pressed: ");
+        if (devices[i].currentState != targetState) {
+
+          Serial.print("Switched: ");
           Serial.println(devices[i].id);
 
-          if (devices[i].currentState == "OFF")
-            devices[i].currentState = "ON";
-          else
-            devices[i].currentState = "OFF";
+          devices[i].currentState = targetState;
 
           updateRelay(devices[i].relayPin, devices[i].currentState);
+          
+          // Wait 500ms before sending Wi-Fi to prevent power crash from simultaneous current draw
+          delay(500); 
 
           sendStateToServer(devices[i].id, devices[i].currentState);
         }

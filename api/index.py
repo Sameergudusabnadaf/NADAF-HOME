@@ -40,8 +40,8 @@ def get_all_states():
                 return memory_states
         except Exception as e:
             print("Redis get error:", e)
-            # Fallback to last known states instead of resetting to OFF
-            return memory_states
+            # Do NOT return memory_states here, as divergent serverless instances will cause the ESP to flash lights ON and OFF!
+            return None
     return memory_states
 
 def update_state(device_id, state):
@@ -104,6 +104,8 @@ def get_states():
         record_ping()
 
     current_states = get_all_states()
+    if current_states is None:
+        return jsonify({"error": "Database error or rate limit"}), 500
     return jsonify(current_states), 200
 
 @app.route('/api/esp_status', methods=['GET'])
