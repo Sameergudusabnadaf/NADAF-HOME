@@ -195,7 +195,7 @@
         } else if (window.location.hostname.includes("github.io")) {
             BACKEND_URL = "https://nadafhome.vercel.app"; // Point to Vercel Backend
         } else if (window.location.port === "5500" || window.location.port === "5501") {
-            BACKEND_URL = "http://127.0.0.1:5000";
+            BACKEND_URL = "https://nadafhome.vercel.app"; // Point to Vercel Backend when using Live Server
         } else {
             // Default to Vercel backend for all other situations (like local file opening)
             BACKEND_URL = "https://nadafhome.vercel.app";
