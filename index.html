@@ -261,8 +261,12 @@
         // Automatically update UI if physical buttons are pressed on the ESP32
         setInterval(() => {
             fetch(BACKEND_URL + '/get_states')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error("API Error");
+                return response.json();
+            })
             .then(data => {
+                if (data.error) return;
                 for (const [id, state] of Object.entries(data)) {
                     let checkbox = document.getElementById(id);
                     if(checkbox) {

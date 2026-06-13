@@ -47,6 +47,9 @@ def get_all_states():
 def update_state(device_id, state):
     global memory_states
     states = get_all_states()
+    if states is None:
+        states = memory_states # Fallback to local memory if Redis failed so the UI doesn't crash
+        
     if device_id in states:
         states[device_id] = state
         memory_states[device_id] = state # Always update local cache
